@@ -42,17 +42,24 @@ function App() {
     });
   };
 
+  const cloneSnapshot = (s: RunSnapshot): RunSnapshot => ({
+    ...s,
+    tasks: [...s.tasks],
+    messages: [...s.messages],
+    events: [...s.events],
+  });
+
   const start = () => {
     stop();
     const run = createWorkspaceRun(input, {
       agents,
       onEvent: () => {
         const next = controllerRef.current?.getSnapshot();
-        if (next) setSnapshot({ ...next });
+        if (next) setSnapshot(cloneSnapshot(next));
       },
     });
     controllerRef.current = run;
-    setSnapshot({ ...run.getSnapshot() });
+    setSnapshot(cloneSnapshot(run.getSnapshot()));
   };
 
   useEffect(() => {

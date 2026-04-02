@@ -309,7 +309,6 @@ export function createWorkspaceRun(
     });
 
     updateTask(buildTask.id, { status: "in_progress", startedAt: Date.now() });
-    console.log(Date.now());
     pushMsg(
       mkMessage({
         from: "planner",
