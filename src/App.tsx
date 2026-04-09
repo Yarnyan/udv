@@ -5,6 +5,7 @@ import { DEFAULT_AGENTS } from "./agents/presets";
 import type { AgentDefinition, RunSnapshot } from "./agents/types";
 import TaskCard from "./components/dashboard/TaskCard";
 import MessageRow from "./components/dashboard/MessageRow";
+import AgentsFlow from "./components/flow/AgentsFlow";
 
 function App() {
   const agents = useMemo<AgentDefinition[]>(() => DEFAULT_AGENTS, []);
@@ -191,49 +192,67 @@ function App() {
           </section>
         </div>
 
-        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <section className="rounded-xl bg-zinc-900/40 p-4 ring-1 ring-zinc-800">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-sm font-semibold text-zinc-200">Задачи</h2>
-            </div>
-            <div className="mt-3 space-y-2">
-              {snapshot.tasks.length === 0 ? (
-                <div className="rounded-lg bg-zinc-950/60 p-3 text-sm text-zinc-400 ring-1 ring-zinc-800">
-                  Задачи появятся после старта.
-                </div>
-              ) : (
-                snapshot.tasks
-                  .slice()
-                  .reverse()
-                  .map((t) => <TaskCard key={t.id} task={t} agents={agents} />)
-              )}
-            </div>
-          </section>
-
+        <div className="mt-4 space-y-4">
           <section className="rounded-xl bg-zinc-900/40 p-4 ring-1 ring-zinc-800">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-sm font-semibold text-zinc-200">
-                Лента событий
+                Граф взаимодействия
               </h2>
               <div className="text-xs text-zinc-400">
-                {snapshot.events.length} событий
+                {snapshot.messages.length} сообщений
               </div>
             </div>
-            <div className="mt-3 h-[520px] overflow-auto rounded-lg bg-zinc-950 ring-1 ring-zinc-800">
-              <div className="divide-y divide-zinc-900">
-                {snapshot.messages.length === 0 ? (
-                  <div className="p-3 text-sm text-zinc-400">
-                    События появятся после старта.
-                  </div>
-                ) : (
-                  snapshot.messages.map((m) => (
-                    <MessageRow key={m.id} msg={m} agents={agents} />
-                  ))
-                )}
-                <div ref={bottomRef} />
-              </div>
+            <div className="mt-3">
+              <AgentsFlow agents={agents} messages={snapshot.messages} />
             </div>
           </section>
+
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <section className="rounded-xl bg-zinc-900/40 p-4 ring-1 ring-zinc-800">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-sm font-semibold text-zinc-200">Задачи</h2>
+              </div>
+              <div className="mt-3 space-y-2">
+                {snapshot.tasks.length === 0 ? (
+                  <div className="rounded-lg bg-zinc-950/60 p-3 text-sm text-zinc-400 ring-1 ring-zinc-800">
+                    Задачи появятся после старта.
+                  </div>
+                ) : (
+                  snapshot.tasks
+                    .slice()
+                    .reverse()
+                    .map((t) => (
+                      <TaskCard key={t.id} task={t} agents={agents} />
+                    ))
+                )}
+              </div>
+            </section>
+
+            <section className="rounded-xl bg-zinc-900/40 p-4 ring-1 ring-zinc-800">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-sm font-semibold text-zinc-200">
+                  Лента событий
+                </h2>
+                <div className="text-xs text-zinc-400">
+                  {snapshot.events.length} событий
+                </div>
+              </div>
+              <div className="mt-3 h-[520px] overflow-auto rounded-lg bg-zinc-950 ring-1 ring-zinc-800">
+                <div className="divide-y divide-zinc-900">
+                  {snapshot.messages.length === 0 ? (
+                    <div className="p-3 text-sm text-zinc-400">
+                      События появятся после старта.
+                    </div>
+                  ) : (
+                    snapshot.messages.map((m) => (
+                      <MessageRow key={m.id} msg={m} agents={agents} />
+                    ))
+                  )}
+                  <div ref={bottomRef} />
+                </div>
+              </div>
+            </section>
+          </div>
         </div>
       </div>
     </div>

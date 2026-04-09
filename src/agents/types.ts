@@ -21,6 +21,10 @@ export type MessageKind =
   | "user_task"
   | "plan"
   | "subtask"
+  | "bid_request"
+  | "bid"
+  | "assignment"
+  | "decision"
   | "result"
   | "review_notes"
   | "final_answer"
@@ -35,6 +39,7 @@ export type AgentMessage = {
   title: string;
   body: string;
   relatedTaskId?: string;
+  meta?: Record<string, unknown>;
 };
 
 export type WorkspaceEvent =
@@ -62,4 +67,27 @@ export type RunSnapshot = {
   tasks: WorkspaceTask[];
   messages: AgentMessage[];
   events: WorkspaceEvent[];
+};
+
+export type AgentAction =
+  | { type: "send"; message: Omit<AgentMessage, "id" | "at"> & { at?: number } }
+  | {
+      type: "create_task";
+      task: Omit<WorkspaceTask, "createdAt"> & { createdAt?: number };
+    }
+  | { type: "update_task"; id: string; patch: Partial<WorkspaceTask> }
+  | { type: "final"; answer: string }
+  | { type: "noop" };
+
+export type AgentContext = {
+  signal: AbortSignal;
+  now: () => number;
+  sleep: (ms: number) => Promise<void>;
+  agents: AgentDefinition[];
+  getTasks: () => WorkspaceTask[];
+};
+
+export type AgentImpl = {
+  id: AgentId;
+  onMessage: (ctx: AgentContext, msg: AgentMessage) => Promise<AgentAction[]>;
 };

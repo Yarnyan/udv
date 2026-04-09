@@ -30,4 +30,3 @@ export const DEFAULT_AGENTS: AgentDefinition[] = [
     description: "Критический взгляд, улучшения, финализация.",
   },
 ];
-
